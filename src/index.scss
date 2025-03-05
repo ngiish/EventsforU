@@ -29,4 +29,24 @@
     padding: 2rem;
     text-align: center;
   }
+
+  button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #61dafb;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  .auth {
+    margin-top: 20px;
+    input {
+      display: block;
+      margin: 10px auto;
+      padding: 8px;
+      width: 200px;
+    }
+  }
 }

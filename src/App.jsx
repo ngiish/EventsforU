@@ -1,5 +1,8 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import Landing from "./components/Landing";
 import EventCard from "./components/EventCard";
+import Auth from "./components/Auth";
+import './App.scss';
 
 function Home() {
   return <h2>Home Page</h2>;
@@ -30,15 +33,20 @@ function App() {
       <header>
       <h1>Event Planner</h1>
       <nav>
-        <Link to="/">Home</Link> | <Link to="/events">Events</Link>
+        <Link to="/">Home</Link> | <Link to="/events">Events</Link> |
+        <Link to="/signup">Sign Up</Link> | <Link to="/login">Log In</Link>
       </nav>
       </header>
       <main>
         <Routes>
-        <Route path="/" element={<Home />}/>
+        <Route path="/" element={<Landing />}/>
         <Route path="/events" element={<Events />}/>
+        <Route path="/signup" element={<Auth isSignUp={true} />}/>
+        <Route path="/login" element={<Auth isSignUp={false} />}/>
         </Routes>
       </main>
+
+      <Auth />
     </div>
     </BrowserRouter>
   );
