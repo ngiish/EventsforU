@@ -27,29 +27,18 @@ function Landing() {
 
     return (
         <div className="landing">
-            {/* Navigation Bar */}
-            <nav className="navbar">
-                <h1 className="logo">EventsForU</h1>
-                <div className="nav-buttons">
-                    <Link to="/signup" className="nav-btn">Sign Up</Link>
-                    <Link to="/login" className="nav-btn">Log In</Link>
-                </div>
-            </nav>
-
-            {/* Hero Section with Slideshow */}
-            <section className="hero">
-                <img
-                    src={images[currentImageIndex]}
-                    alt={`Event Slide ${currentImageIndex + 1}`}
-                    className="hero-image"
-                />
-                <div className="hero-text">
-                    <h2>Plan, Manage, Celebrate</h2>
-                    <p>Create unforgettable events with ease.</p>
-                </div>
-            </section>
-        </div>
+        <section className="hero">
+          <img
+            src={images[currentImageIndex]}
+            alt={`Event Slide ${currentImageIndex + 1}`}
+            className="hero-image"
+          />
+          <div className="hero-text">
+            <h2>Plan, Manage, Celebrate</h2>
+            <p>Create unforgettable events with ease.</p>
+          </div>
+        </section>
+      </div>
     );
-}
-
+  }
 export default Landing;

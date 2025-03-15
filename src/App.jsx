@@ -1,56 +1,53 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
 import Landing from "./components/Landing";
 import EventCard from "./components/EventCard";
 import Auth from "./components/Auth";
 import './App.scss';
+import Home from "./components/Home";
+import { useEffect, useState } from "react";
+import {auth} from "./firebase";
 
-function Home() {
-  return <h2>Home Page</h2>;
-
-}
-function Events() {
-  const events = [
-    {title: "Birthday Party", date:"March 10, 2025"},
-    {title: "Wedding", date:"April 15, 2025"},
-    {title: "Conference", date:"May 20, 2025"},
-  ];
-  return (
-    <>
-    <h2>Events Page</h2>
-    {events.map((event, index) => (
-      <EventCard key={index} title={event.title} date={event.date}/>
-      ))}
-    
-    </>
-  );
-}
 
 function App() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged ((currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, [])
 
   return (
     <BrowserRouter>
-    <div className="app">
-      <header>
-      <h1>Event Planner</h1>
-      <nav>
-        <Link to="/">Home</Link> | <Link to="/events">Events</Link> |
-        <Link to="/signup">Sign Up</Link> | <Link to="/login">Log In</Link>
-      </nav>
-      </header>
-      <main>
-        <Routes>
-        <Route path="/" element={<Landing />}/>
-        <Route path="/events" element={<Events />}/>
-        <Route path="/signup" element={<Auth isSignUp={true} />}/>
-        <Route path="/login" element={<Auth isSignUp={false} />}/>
-        </Routes>
-      </main>
-
-      <Auth />
-    </div>
+      <div className="app">
+        <nav className="navbar">
+          <h1 className="logo">EventsForU</h1>
+          <div className="nav-buttons">
+            {user ? (
+              <>
+                <Link to="/home" className="nav-btn">Home</Link>
+                <Link to="/" onClick={() => auth.signOut()} className="nav-btn">Log Out</Link>
+              </>
+            ) : (
+              <>
+                <Link to="/signup" className="nav-btn">Sign Up</Link>
+                <Link to="/login" className="nav-btn">Log In</Link>
+              </>
+            )}
+          </div>
+        </nav>
+        <main>
+          <Routes>
+            <Route path="/" element={user ? <Navigate to="/home" /> : <Landing />} />
+            <Route path="/home" element={user ? <Home /> : <Navigate to="/login" />} />
+            <Route path="/signup" element={<Auth isSignUp={true} />} />
+            <Route path="/login" element={<Auth isSignUp={false} />} />
+          </Routes>
+        </main>
+      </div>
     </BrowserRouter>
   );
-
 }
 
-export default App
+export default App 
