@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { db, auth } from '../firebase'; // Adjust path to your Firebase config
 import { collection, addDoc, query, where, onSnapshot } from 'firebase/firestore';
 import EventCard from './EventCard'; // Reuse your existing component
+import '../Home.module.scss';
 
 function Home() {
   const [event, setEvent] = useState({ title: '', date: '', time: '', location: '' });
