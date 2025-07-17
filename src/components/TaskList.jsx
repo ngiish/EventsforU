@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react';
-import { db } from '../firebase';
-import { collection, query, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { db, auth } from '../firebase';
+import { collection, query, where, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { useEventRole } from '../context/EventRoleContext.jsx';
 import styles from '../TaskList.module.scss';
 
 const TaskList = ({ eventId }) => {
   const [tasks, setTasks] = useState([]);
   const [editTaskID,setEditTaskID] = useState(null);
   const[editTaskName, setEditTaskName] = useState('');
+  const role = useEventRole();
+  const userId = auth.currentUser?.uid;
 
   useEffect(() => {
+    if (!eventId) return;
+
     const q = query(collection(db, `events/${eventId}/tasks`));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const taskData = snapshot.docs.map((doc) => ({
@@ -20,7 +25,16 @@ const TaskList = ({ eventId }) => {
     return () => unsubscribe();
   }, [eventId]);
 
+   // ✅ Filter tasks based on user role
+  const visibleTasks = tasks.filter((task) => {
+    if (['admin', 'co_organizer'].includes(role)) return true;
+    if (role === 'vendor') return task.assignedTo === userId;
+    if (role === 'guest') return true;
+    return false;
+  });
+
   const handleComplete = async (taskId, completed) => {
+    if (!['admin', 'co_organizer', 'vendor'].includes(role)) return;
     try {
       const taskRef = doc(db, `events/${eventId}/tasks`, taskId);
       await updateDoc(taskRef, { completed: !completed });
@@ -30,6 +44,7 @@ const TaskList = ({ eventId }) => {
   };
 
   const handleDelete = async (taskId) => {
+    if (!['admin', 'co_organizer'].includes(role)) return;
     try {
       const taskRef = doc(db, `events/${eventId}/tasks`, taskId);
       await deleteDoc(taskRef);
@@ -39,6 +54,7 @@ const TaskList = ({ eventId }) => {
   };
 
   const handleEdit = (taskId, name) => {
+    if (!['admin', 'co_organizer'].includes(role)) return;
     setEditTaskID(taskId);
     setEditTaskName(name);
   };
@@ -58,10 +74,10 @@ const TaskList = ({ eventId }) => {
 
   return (
     <ul className={styles.taskList}>
-      {tasks.length === 0 ? (
+      {visibleTasks.length === 0 ? (
         <li className={styles.empty}>No tasks yet</li>
       ) : (
-        tasks.map((task) => (
+        visibleTasks.map((task) => (
           <li key={task.id} className={styles.taskItem}>
             {editTaskId === task.id ? (
               <div className={styles.taskContent}>
@@ -90,6 +106,7 @@ const TaskList = ({ eventId }) => {
                 <span className={task.completed ? styles.completed : ''}>
                   {task.name}
                 </span>
+                {['admin', 'co_organizer'].includes(role) && (
                 <button
                   onClick={() => handleEdit(task.id, task.name)}
                   className={styles.editBtn}
@@ -97,8 +114,10 @@ const TaskList = ({ eventId }) => {
                 >
                   Edit
                 </button>
+                )}
               </div>
             )}
+            {['admin', 'co_organizer'].includes(role) && (
             <button
               onClick={() => handleDelete(task.id)}
               className={styles.deleteBtn}
@@ -106,6 +125,7 @@ const TaskList = ({ eventId }) => {
             >
               Delete
             </button>
+            )}
           </li>
         ))
       )}

@@ -10,10 +10,12 @@ import {auth} from "./firebase";
 
 function App() {
   const [user, setUser] = useState(null);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged ((currentUser) => {
       setUser(currentUser);
+      setAuthChecked(true);
     });
     return () => unsubscribe();
   }, [])
@@ -22,7 +24,7 @@ function App() {
     <BrowserRouter>
       <div className="app">
         <nav className="navbar">
-          <h1 className="logo">EventsForU</h1>
+          <h1><Link to="/" className="logo">EventsForU</Link></h1>
           <div className="nav-buttons">
             {user ? (
               <>
@@ -38,12 +40,14 @@ function App() {
           </div>
         </nav>
         <main>
+          {authChecked && (
           <Routes>
             <Route path="/" element={user ? <Navigate to="/home" /> : <Landing />} />
             <Route path="/home" element={user ? <Home /> : <Navigate to="/login" />} />
             <Route path="/signup" element={<Auth isSignUp={true} />} />
             <Route path="/login" element={<Auth isSignUp={false} />} />
           </Routes>
+          )}
         </main>
       </div>
     </BrowserRouter>
