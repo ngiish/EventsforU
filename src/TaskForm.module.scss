@@ -1,75 +1,298 @@
-.taskForm {
-    display: flex;
-    gap: 8px;
-    margin-top: 16px;
-    align-items: center;
-  }
+// ===== VARIABLES (Re-use from your main theme SCSS) =====
+$primary-purple: #8b5cf6;
+$primary-purple-dark: #7c3aed;
+$primary-purple-light: #a78bfa;
+$secondary-purple: #c4b5fd;
+$accent-purple: #ddd6fe;
+$purple-50: #faf5ff;
+$purple-100: #f3e8ff;
+$purple-900: #581c87;
 
+// Neutral colors
+$white: #ffffff;
+$gray-50: #f9fafb;
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+$gray-800: #1f2937;
+$gray-900: #111827;
+
+// Status colors
+$success: #10b981;
+$error: #ef4444;
+$warning: #f59e0b;
+$info: #3b82f6;
+
+// Shadows
+$shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+$shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+$shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+$shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+// Breakpoints
+$mobile: 480px;
+$tablet: 768px;
+
+// ===== MIXINS =====
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+  
+  &:focus-visible {
+    outline: 2px solid $primary-purple;
+    outline-offset: 2px;
+  }
+}
+
+@mixin input-base {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid $gray-300;
+  border-radius: 12px;
+  font-size: 16px;
+  line-height: 1.5;
+  background: $white;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &::placeholder {
+    color: $gray-400;
+  }
+  
+  &:hover {
+    border-color: $primary-purple-light;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-purple;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  }
+  
+  &.error {
+    border-color: $error;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  }
+}
+
+// ===== TASK FORM STYLES =====
+.taskForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  background: linear-gradient(135deg, $white 0%, $purple-50 100%);
+  border-radius: 16px;
+  box-shadow: $shadow-sm;
+  border: 1px solid $gray-200;
+  
+  @media (max-width: $mobile) {
+    padding: 16px;
+    gap: 16px;
+  }
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 600;
+  color: $gray-700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.inputField {
+  @include input-base;
+  
+  &:disabled {
+    background: $gray-100;
+    cursor: not-allowed;
+    border-color: $gray-200;
+  }
+}
+
+.submitBtn {
+  @include button-base;
+  background: linear-gradient(135deg, $primary-purple 0%, $primary-purple-dark 100%);
+  color: $white;
+  font-size: 16px;
+  padding: 16px 24px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+  
+  &:hover {
+    background: linear-gradient(135deg, $primary-purple-dark 0%, $purple-900 100%);
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg;
+    
+    &::before {
+      left: 100%;
+    }
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &:disabled {
+    background: $gray-400;
+    cursor: not-allowed;
+    
+    &::after {
+      content: '';
+      width: 16px;
+      height: 16px;
+      border: 2px solid transparent;
+      border-top: 2px solid $white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-left: 8px;
+    }
+  }
+}
+
+// ===== FEEDBACK MESSAGES =====
+.feedback {
+  font-size: 0.9rem;
+  color: $gray-600;
+  text-align: center;
+  margin-top: -10px;
+}
+
+.error {
+  font-size: 0.9rem;
+  color: $error;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 10px 15px;
+  border-radius: 8px;
+  text-align: center;
+  margin-top: -10px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.success {
+  font-size: 0.9rem;
+  color: $success;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  padding: 10px 15px;
+  border-radius: 8px;
+  text-align: center;
+  margin-top: -10px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+// ===== RESTRICTED ACCESS MESSAGE =====
+.restricted {
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 16px;
+  box-shadow: $shadow-sm;
+  border: 1px solid $gray-200;
+  text-align: center;
+  color: $gray-700;
+  font-size: 1.1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  
+  &::before {
+    content: '🔒';
+    font-size: 1.5rem;
+  }
+  
+  p {
+    margin: 0;
+  }
+}
+
+// ===== ANIMATIONS =====
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// ===== DARK MODE SUPPORT =====
+@media (prefers-color-scheme: dark) {
+  .taskForm {
+    background: rgba(31, 41, 55, 0.9);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
   .label {
-    display: block;
-    margin-bottom: 4px;
-    font-size:14px;
-    font-weight: 500;
-    color: #333;
+    color: $gray-200;
   }
   
   .inputField {
-    flex: 1;
-    border: 1px solid #ccc;
-    padding: 8px;
-    border-radius: 4px;
-    width: 100%;
-    font-size: 16px;
-  
-    &:focus {
-      outline: none;
-      border-color: #007bff;
-      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: $white;
+    
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.5);
     }
-  
+    
     &:disabled {
-      background-color: #f1f5f9;
-      cursor: not-allowed;
+      background: rgba(255, 255, 255, 0.02);
+      border-color: rgba(255, 255, 255, 0.1);
     }
   }
   
-  .submitBtn {
-    background-color: #007bff;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.2s ease;
-  
-    &:hover:not(:disabled) {
-      background-color: #0056b3;
-    }
-  
-    &:disabled {
-      background-color: #6b7280;
-      cursor: not-allowed;
-    }
+  .restricted {
+    background: rgba(31, 41, 55, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: $gray-200;
   }
-
+  
   .feedback {
-    font-size: 12px;
-    color: #666;
-    margin-top: 4px;
-    text-align: center;
+    color: $gray-300;
   }
-  
-  .error {
-    font-size: 12px;
-    color: #ef4444;
-    margin-top: 4px;
-    text-align: center;
-  }
-  
-  .success {
-    font-size: 12px;
-    color: #4caf50;
-    margin-top: 4px;
-    text-align: center;
-  }
+}

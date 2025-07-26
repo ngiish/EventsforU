@@ -78,6 +78,21 @@ function Landing() {
           and efficient — whether you're organizing a wedding, conference, or community event.
         </p>
       </section>
+
+      <section id="contact" className="contact">
+        <h2>Contact Us</h2>
+        <p>Have questions? Reach out to our team.</p>
+        {/* <form>
+          <input type="text" placeholder="Your Name" />
+          <input type="email" placeholder="Your Email" />
+          <textarea placeholder="Your Message"></textarea>
+          <button className="cta-button">Send Message</button>
+        </form> */}
+      </section>
+
+      <footer className="footer">
+        <p>&copy; 2025 EventsForU. All rights reserved.</p>
+      </footer>
     </div>
   );
 }

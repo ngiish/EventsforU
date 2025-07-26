@@ -1,18 +1,17 @@
 import { useState } from 'react';
 import { db } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
-import styles from '../TaskForm.module.scss';
-import { useEventRole } from '../context/EventRoleContext.jsx';
+import styles from '../TaskForm.module.scss'; // Import the SCSS module
+import { useEventRole } from '../context/EventRoleContext.jsx'; // Assuming this path is correct
 
 const TaskForm = ({ eventId }) => {
   const [taskName, setTaskName] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
-  const [collaborators, setCollaborators] = useState({});
+  const [collaborators, setCollaborators] = useState({}); // You'll need to populate this from Firebase
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const role = useEventRole();
-
+  const role = useEventRole(); // Assuming this hook provides the user's role
   const maxLength = 100;
 
   // ✅ Check permissions before rendering the form
@@ -24,11 +23,8 @@ const TaskForm = ({ eventId }) => {
     );
   }
 
-  console.log('TaskForm eventId:', eventId); // Added for debugging
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted, taskName:', taskName, 'eventId:', eventId);
     setError('');
     setSuccess('');
 
@@ -48,14 +44,17 @@ const TaskForm = ({ eventId }) => {
 
     setIsLoading(true);
     try {
+      // Assuming 'user' is available from your auth context or similar
+      const user = { uid: 'current_user_uid' }; // Placeholder: Replace with actual user UID
+      
       await addDoc(collection(db, `events/${eventId}/tasks`), {
         name: taskName,
         completed: false,
         eventId: eventId,
+        assignedTo: assignedTo || null, // Assign null if not selected
         createdAt: new Date(),
         createdBy: user.uid,
       });
-      console.log('Task added successfully')
       setTaskName('');
       setAssignedTo('');
       setSuccess('Task added successfully!');
@@ -69,7 +68,7 @@ const TaskForm = ({ eventId }) => {
 
   return (
     <form onSubmit={handleSubmit} className={styles.taskForm}>
-     <label htmlFor="task-name" className={styles.label}>
+      <label htmlFor="task-name" className={styles.label}>
         Task Name
         <input
           id="task-name"
@@ -77,24 +76,25 @@ const TaskForm = ({ eventId }) => {
           value={taskName}
           onChange={(e) => setTaskName(e.target.value)}
           placeholder="Add a task (e.g., Book caterer)"
-          className={styles.inputField}
+          className={`${styles.inputField} ${error && !taskName.trim() ? styles.error : ''}`}
           disabled={isLoading}
           aria-required="true"
           maxLength={maxLength}
         />
       </label>
 
-       {/* 👇 Assignment Dropdown */}
+      {/* Assignment Dropdown */}
       <label htmlFor="assign-user" className={styles.label}>
         Assign To
         <select
           id="assign-user"
           value={assignedTo}
           onChange={(e) => setAssignedTo(e.target.value)}
-          className={styles.inputField}
+          className={styles.inputField} // Reusing inputField style for select
           disabled={isLoading}
         >
           <option value="">-- Optional --</option>
+          {/* You need to fetch and populate 'collaborators' state for this to work */}
           {Object.entries(collaborators).map(([uid, role]) => (
             <option key={uid} value={uid}>
               {uid} ({role})
@@ -106,14 +106,15 @@ const TaskForm = ({ eventId }) => {
       <button
         type="submit"
         className={styles.submitBtn}
-        disabled={isLoading || !eventId}
+        disabled={isLoading || !eventId || !taskName.trim()} // Disable if taskName is empty
         aria-label="Add task to event"
       >
         {isLoading ? 'Adding...' : 'Add Task'}
       </button>
+
       {isLoading && <p className={styles.feedback}>Adding task...</p>}
       {error && <p className={styles.error}>{error}</p>}
-      {success && <p clasName={styles.success}>{success}</p>}
+      {success && <p className={styles.success}>{success}</p>}
     </form>
   );
 };

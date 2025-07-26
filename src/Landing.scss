@@ -1,3 +1,13 @@
+// Define SCSS variables to match Tailwind defaults and your design
+$gray-800: #1f2937;
+$gray-100: #f9fafb;
+$gray-300: #d1d5db;
+$gray-900: #111827;
+$gray-500: #6b7280;
+$gray-700: #374151;
+$brand-primary: #007bff; // Matches primary-btn
+$brand-primary-light: #339af0; // Lighter shade for focus/hover
+
 html {
   scroll-behavior: smooth;
 }
@@ -171,4 +181,137 @@ html {
   margin: 0 auto;
   font-size: 1.1rem;
   line-height: 1.6;
+}
+
+/* === CONTACT SECTION === */
+.contact {
+  background: $gray-800;
+  h2 {
+    color: $gray-100;
+  }
+  p {
+    color: $gray-300;
+  }
+  form {
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      background-color: $gray-900;
+      border-color: $gray-700;
+      color: $gray-100;
+      &::placeholder {
+        color: $gray-500;
+      }
+      &:focus {
+        border-color: $brand-primary-light;
+        box-shadow: 0 0 0 3px rgba($brand-primary-light, 0.2);
+      }
+    }
+    .cta-button {
+      background: linear-gradient(to right, $brand-primary-light, $brand-primary);
+      &:hover {
+        background: linear-gradient(to right, $gray-700, $gray-900);
+      }
+    }
+  }
+}
+
+/* === FOOTER SECTION === */
+.footer {
+  background: $gray-800;
+  color: $gray-100;
+  padding: 1.5rem 2rem;
+  text-align: center;
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .social-icons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+
+    @media (min-width: 768px) {
+      justify-content: flex-start;
+    }
+
+    a {
+      color: $gray-300;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: $gray-100;
+      }
+
+      svg {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+    }
+  }
+
+  .links {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+
+    @media (min-width: 768px) {
+      justify-content: flex-start;
+    }
+
+    h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        margin-bottom: 0.5rem;
+
+        a {
+          color: $gray-300;
+          text-decoration: none;
+          transition: color 0.3s ease;
+
+          &:hover {
+            color: $gray-100;
+          }
+        }
+      }
+    }
+  }
+
+  .copyright {
+    border-top: 1px solid $gray-700;
+    padding-top: 1rem;
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: $gray-500;
+  }
 }

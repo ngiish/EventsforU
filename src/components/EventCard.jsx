@@ -1,31 +1,112 @@
+import { useState } from 'react';
+import { deleteDoc, doc } from 'firebase/firestore';
+import { db } from '../firebase';
 import TaskForm from './TaskForm';
 import TaskList from './TaskList';
 import styles from '../EventCard.module.scss';
 
-const EventCard = ({ title, date, id }) => {
+const EventCard = ({ title, date, id, taskCount = 0, completedTasks = 0 }) => {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this event? This will delete all associated tasks.')) {
-      try {
-        await deleteDoc(doc(db, 'events', id));
-      } catch (error) {
-        console.error('Error deleting event:', error);
-      }
+    if (!showConfirm) {
+      setShowConfirm(true);
+      setTimeout(() => setShowConfirm(false), 3000); // Reset after 3 seconds
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await deleteDoc(doc(db, 'events', id));
+    } catch (error) {
+      console.error('Error deleting event:', error);
+    } finally {
+      setIsDeleting(false);
+      setShowConfirm(false);
     }
   };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  const completionPercentage = taskCount > 0 ? Math.round((completedTasks / taskCount) * 100) : 0;
+
   return (
     <div className={styles.eventCard}>
-      <h3 className={styles.title}>{title}</h3>
-      <p className={styles.date}>{date}</p>
-      <TaskForm eventId={id} />
-      <TaskList eventId={id} />
+      {/* Card Header */}
+      <div className={styles.cardHeader}>
+        <h3 className={styles.title}>{title}</h3>
+        <div className={styles.dateContainer}>
+          <span className={styles.dateIcon}>📅</span>
+          <p className={styles.date}>{formatDate(date)}</p>
+        </div>
+      </div>
 
-      <button
-        onClick={handleDelete}
-        className={styles.deleteBtn}
-        aria-label={`Delete event: ${title}`}
-      >
-        Delete Event
-        </button>
+      {/* Card Content */}
+      <div className={styles.cardContent}>
+        {/* Task Form Section */}
+        <div className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <h4>Add New Task</h4>
+            <span className={styles.sectionBadge}>Create</span>
+          </div>
+          <div className={styles.taskFormSection}>
+            <TaskForm eventId={id} />
+          </div>
+        </div>
+
+        {/* Task List Section */}
+        <div className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <h4>Tasks</h4>
+            <span className={styles.sectionBadge}>{taskCount}</span>
+          </div>
+          <div className={styles.taskListSection}>
+            <TaskList eventId={id} />
+          </div>
+        </div>
+      </div>
+
+      {/* Card Footer */}
+      <div className={styles.cardFooter}>
+        <div className={styles.cardMeta}>
+          <div className={styles.metaItem}>
+            <span className={styles.metaIcon}>📋</span>
+            <span>{taskCount} tasks</span>
+          </div>
+          <div className={styles.metaItem}>
+            <span className={styles.metaIcon}>✅</span>
+            <span>{completedTasks} completed</span>
+          </div>
+          <div className={styles.metaItem}>
+            <span className={styles.metaIcon}>📊</span>
+            <span>{completionPercentage}% done</span>
+          </div>
+        </div>
+
+        <div className={styles.cardActions}>
+          <div className={`${styles.statusIndicator} ${taskCount > 0 ? styles.active : styles.inactive}`}>
+            {taskCount > 0 ? 'Active' : 'No Tasks'}
+          </div>
+          
+          <button
+            onClick={handleDelete}
+            className={`${styles.deleteBtn} ${showConfirm ? styles.confirming : ''}`}
+            aria-label={`Delete event: ${title}`}
+            disabled={isDeleting}
+          >
+            {isDeleting ? 'Deleting...' : showConfirm ? 'Confirm Delete' : 'Delete Event'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
