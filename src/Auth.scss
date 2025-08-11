@@ -1,0 +1,166 @@
+/* =========================
+   EventsForU Theme
+   Purple ↔ Cyan gradient + soft neutrals
+   ========================= */
+:root{
+  --brand-purple: #8B5CF6;     /* EventsForU purple accent */
+  --brand-purple-600: #7C3AED; /* deeper purple for emphasis */
+  --brand-cyan:   #67E8F9;     /* Add Event button cyan */
+  --brand-cyan-600:#22D3EE;    /* stronger cyan for links/hover */
+  --ink: #0f172a;              /* dark text */
+  --muted: #64748b;            /* subtle text */
+  --line: #cbd5e1;             /* input borders */
+  --bg: #ffffff;
+  --brand-gradient: linear-gradient(90deg, var(--brand-purple), var(--brand-cyan));
+}
+
+/* Two-column layout */
+.auth-page{
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--bg);
+}
+@media (max-width: 1024px){
+  .auth-page{ grid-template-columns: 1fr; }
+}
+
+/* Left side spacing like the screenshot (content pulled inward) */
+.auth-left{
+  display: flex;
+  align-items: flex-start;
+  padding: 3.5rem 1.25rem;
+}
+@media (min-width:1024px){
+  .auth-left{
+    align-items: center;
+    padding-left: 6rem;
+    padding-right: 2.5rem;
+  }
+}
+
+/* LOGIN badge with gradient border, echoing the first screenshot but on brand */
+.login-badge{
+  display: inline-flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .75rem 1.25rem;
+  border: 4px solid transparent;
+  border-radius: 14px;
+  background:
+    linear-gradient(var(--bg), var(--bg)) padding-box,
+    var(--brand-gradient) border-box;
+}
+.badge-icon{
+  display:grid;place-items:center;
+  height:32px;width:32px;border-radius:8px;
+  background: var(--ink); color:#fff; font-weight:800;
+}
+.badge-text{
+  font-size: 1.7rem; font-weight: 800; letter-spacing: .02em; color: var(--ink);
+}
+
+/* Auth block and a11y */
+.auth{ margin-top: 2rem; max-width: 520px; }
+.sr-only{ position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+
+/* Field groups to match “Your Email/Your Password” labels */
+.field{ display:grid; gap:.4rem; }
+.label-text{ color:#0b1220; font-size:.95rem; }
+
+/* Inputs: neutral border, brand focus */
+.input-field{
+  height: 44px; padding: 0 12px;
+  border: 2px solid var(--line);
+  border-radius: 8px; outline: none;
+  font-size: .95rem;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+.input-field::placeholder{ color: var(--muted); }
+.input-field:focus{
+  border-color: var(--brand-purple);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2); /* #8B5CF6 @ 20% */
+}
+
+/* Submit button: pill outline that fills with gradient on hover */
+.submit-btn{
+  height: 44px; width: 100%;
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background:
+    linear-gradient(var(--bg), var(--bg)) padding-box,
+    var(--brand-gradient) border-box;
+  color: var(--ink);
+  font-weight: 700; letter-spacing:.02em;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease, transform 60ms ease, box-shadow 160ms ease;
+}
+.submit-btn:hover{
+  background: var(--brand-gradient);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(124, 58, 237, .2), 0 6px 18px rgba(34, 198, 231, .18);
+}
+.submit-btn:active{ transform: translateY(1px); }
+
+/* Error + helper links */
+.error{ margin-top:.5rem; color:#dc2626; font-size:.92rem; }
+.helper-links{ margin-top:.5rem; color:#334155; font-size:.92rem; }
+.helper-links a{
+  color: var(--brand-cyan-600);
+  text-decoration: underline;
+  font-weight: 600;
+}
+.helper-links a:hover{
+  color: var(--brand-purple-600);
+}
+
+/* Right side: hero with slight brand tint and readable overlay.
+   Replace background image URL if you have an asset. */
+.auth-right{
+  position: relative; display:none;
+  background: url("/placeholder.svg?height=1600&width=1200") center/cover no-repeat;
+}
+@media (min-width:1024px){ .auth-right{ display:block; } }
+
+.hero-overlay{
+  position:absolute; inset:0;
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,.65), rgba(255,255,255,.25), rgba(255,255,255,0)),
+    linear-gradient(90deg, rgba(124,58,237,.15), rgba(34,198,231,.15));
+}
+.hero-content{
+  position: relative; height: 100%;
+  display:flex; flex-direction:column; align-items:center;
+  padding-top: 6rem;
+}
+
+/* Logo tile draws from both screenshots (dark tile + brand) */
+.logo-tile{
+  display:inline-flex; align-items:center; gap:.75rem;
+  padding: 2.1rem 1.9rem;
+  border-radius: 18px;
+  background:
+    linear-gradient(#0f172a, #0f172a) padding-box,
+    var(--brand-gradient) border-box;
+  border: 2px solid transparent;
+  color:#fff; box-shadow: 0 10px 24px rgba(15,23,42,.25);
+}
+.logo-mark{
+  height:40px; width:40px; border-radius:10px;
+  background: rgba(255,255,255,.12);
+  display:grid; place-items:center; font-weight:800;
+}
+.logo-name{ font-size: 1.1rem; font-weight: 700; }
+
+/* Headline + tagline, with purple emphasis and cyan accent */
+.hero-text{ margin-top: 1.75rem; text-align:center; padding: 0 1.5rem; }
+.hero-title{ font-size: 2rem; font-weight: 800; color: var(--ink); }
+.hero-subtitle{ margin-top:.6rem; font-size:1.1rem; color: var(--ink); opacity:.9; }
+.hero-tagline{ margin-top:.35rem; font-size:1.05rem; color: var(--brand-purple-600); }
+
+/* Positioning for the badge when placed inside the form */
+.auth form .form-badge{
+  align-self: start;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
