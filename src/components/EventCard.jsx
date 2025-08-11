@@ -5,9 +5,10 @@ import TaskForm from './TaskForm';
 import TaskList from './TaskList';
 import styles from '../EventCard.module.scss';
 
-const EventCard = ({ title, date, id, taskCount = 0, completedTasks = 0 }) => {
+const EventCard = ({ title, date, id, taskCount = 0, completedTasks = 0, onDelete }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleDelete = async () => {
     if (!showConfirm) {
@@ -16,11 +17,25 @@ const EventCard = ({ title, date, id, taskCount = 0, completedTasks = 0 }) => {
       return;
     }
 
+    if (!id) {
+      setErrorMessage('Event ID is missing. CAnnt delete.');
+      setShowConfirm(false);
+      return;
+    }
+
     setIsDeleting(true);
     try {
+      //Remove from firestore
       await deleteDoc(doc(db, 'events', id));
+
+      //Instantly remove from UI by notifying parent
+      if (typeof onDelete === 'fuction') {
+        onDelete(id);
+      }
+
     } catch (error) {
       console.error('Error deleting event:', error);
+      setErrorMessage("Failed to delete event. Please try again.")
     } finally {
       setIsDeleting(false);
       setShowConfirm(false);
@@ -103,7 +118,7 @@ const EventCard = ({ title, date, id, taskCount = 0, completedTasks = 0 }) => {
             aria-label={`Delete event: ${title}`}
             disabled={isDeleting}
           >
-            {isDeleting ? 'Deleting...' : showConfirm ? 'Confirm Delete' : 'Delete Event'}
+            {errorMessage ? errorMessage : isDeleting ? 'Deleting...' : showConfirm ? 'Confirm Delete' : 'Delete Event'}
           </button>
         </div>
       </div>
